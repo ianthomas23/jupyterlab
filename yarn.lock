@@ -2669,6 +2669,7 @@ __metadata:
     "@jupyterlab/launcher": ^4.1.0-beta.0
     "@jupyterlab/mainmenu": ^4.1.0-beta.0
     "@jupyterlab/rendermime": ^4.1.0-beta.0
+    "@jupyterlab/services": ^7.1.0-beta.0
     "@jupyterlab/settingregistry": ^4.1.0-beta.0
     "@jupyterlab/translation": ^4.1.0-beta.0
     "@jupyterlab/ui-components": ^4.1.0-beta.0

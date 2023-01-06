@@ -38,6 +38,7 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { consoleIcon, IFormRendererRegistry } from '@jupyterlab/ui-components';
 import { find } from '@lumino/algorithm';
+import { KernelMessage } from '@jupyterlab/services';
 import {
   JSONExt,
   JSONObject,
@@ -357,6 +358,11 @@ async function activateConsole(
      * Its typical value is: a factory name or the widget id (if singleton)
      */
     type?: string;
+
+    /**
+     * Whether to create a sub-shell for this console
+     */
+    subshell?: boolean;
   }
 
   /**
@@ -389,6 +395,14 @@ async function activateConsole(
     await tracker.add(panel);
     panel.sessionContext.propertyChanged.connect(() => {
       void tracker.save(panel);
+    });
+    panel.sessionContext.ready.then(async () => {
+      if (options.subshell) {
+        const future = await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
+        future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+          panel.sessionContext.session!.kernel!.shellId = msg.content.shell_id;
+        };
+      }
     });
 
     shell.add(panel, 'main', {
