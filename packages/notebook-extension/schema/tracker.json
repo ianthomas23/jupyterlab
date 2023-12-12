@@ -361,6 +361,11 @@
         "rank": 42
       },
       {
+        "command": "notebook:create-iant",
+        "selector": ".jp-Notebook",
+        "rank": 43
+      },
+      {
         "command": "notebook:create-new",
         "selector": ".jp-DirListing-content",
         "rank": 52,

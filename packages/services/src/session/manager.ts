@@ -103,6 +103,7 @@ export class SessionManager extends BaseManager implements Session.IManager {
       'connectToKernel' | 'serverSettings'
     >
   ): Session.ISessionConnection {
+    console.log("XXX connectTo a running session", options)
     const sessionConnection = new SessionConnection({
       ...options,
       connectToKernel: this._connectToKernel,
@@ -286,6 +287,7 @@ export class SessionManager extends BaseManager implements Session.IManager {
       return;
     }
 
+    console.log("XX other requestRunning", models);
     this._models = new Map(models.map(x => [x.id, x]));
 
     this._sessionConnections.forEach(sc => {

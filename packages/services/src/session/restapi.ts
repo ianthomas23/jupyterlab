@@ -22,6 +22,7 @@ export async function listRunning(
   settings: ServerConnection.ISettings = ServerConnection.makeSettings()
 ): Promise<Session.IModel[]> {
   const url = URLExt.join(settings.baseUrl, SESSION_SERVICE_URL);
+  //console.log("XX listRunningB", url);
   const response = await ServerConnection.makeRequest(url, {}, settings);
   if (response.status !== 200) {
     const err = await ServerConnection.ResponseError.create(response);
@@ -104,6 +105,7 @@ export async function startSession(
     method: 'POST',
     body: JSON.stringify(options)
   };
+  console.log("startSession", url, init.body, options, settings)
   const response = await ServerConnection.makeRequest(url, init, settings);
   if (response.status !== 201) {
     const err = await ServerConnection.ResponseError.create(response);

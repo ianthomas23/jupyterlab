@@ -70,6 +70,7 @@ export async function listRunning(
   settings: ServerConnection.ISettings = ServerConnection.makeSettings()
 ): Promise<IModel[]> {
   const url = URLExt.join(settings.baseUrl, KERNEL_SERVICE_URL);
+  //console.log("XX listRunningA", url);
   const response = await ServerConnection.makeRequest(url, {}, settings);
   if (response.status !== 200) {
     const err = await ServerConnection.ResponseError.create(response);

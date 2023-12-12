@@ -72,6 +72,7 @@ export async function listRunning(
 ): Promise<IModel[]> {
   Private.errorIfNotAvailable();
   const url = URLExt.join(settings.baseUrl, TERMINAL_SERVICE_URL);
+  //console.log("XX listRunningC", url);
   const response = await ServerConnection.makeRequest(url, {}, settings);
   if (response.status !== 200) {
     const err = await ServerConnection.ResponseError.create(response);

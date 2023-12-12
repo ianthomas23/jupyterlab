@@ -132,6 +132,8 @@ namespace CommandIDs {
 
   export const createSubConsole = 'notebook:create-sub-console';
 
+  export const createIant = 'notebook:create-iant';
+
   export const createOutputView = 'notebook:create-output-view';
 
   export const clearAllOutputs = 'notebook:clear-all-cell-outputs';
@@ -1214,6 +1216,32 @@ function activateCodeConsole(
         return;
       }
 
+      return Private.createConsole(
+        commands,
+        current,
+        args['activate'] as boolean,
+        true
+      );
+    },
+    isEnabled
+  });
+
+  commands.addCommand(CommandIDs.createIant, {
+    label: trans.__('New Iant command'),
+    execute: args => {
+      const current = tracker.currentWidget;
+
+      if (!current) {
+        return;
+      }
+
+      /*return Private.createIant(
+        commands,
+        current,
+        args['activate'] as boolean,
+        true
+      );*/
+      console.log("XXX createIant");
       return Private.createConsole(
         commands,
         current,
@@ -2988,6 +3016,7 @@ function populatePalette(
     CommandIDs.reconnectToKernel,
     CommandIDs.createConsole,
     CommandIDs.createSubConsole,
+    CommandIDs.createIant,
     CommandIDs.closeAndShutdown,
     CommandIDs.trust,
     CommandIDs.toggleCollapseCmd,
@@ -3105,6 +3134,11 @@ function populateMenus(
     isEnabled
   });
 
+  mainMenu.fileMenu.consoleCreators.add({
+    id: CommandIDs.createIant,
+    isEnabled
+  });
+
   // Add a close and shutdown command to the file menu.
   mainMenu.fileMenu.closeAndCleaners.add({
     id: CommandIDs.closeAndShutdown,
@@ -3187,8 +3221,29 @@ namespace Private {
       insertMode: 'split-bottom',
       type: 'Linked Console'
     };
+    console.log("createConsole options", options)
 
     return commands.execute('console:create', options);
+  }
+
+  export function createIant(
+    commands: CommandRegistry,
+    widget: NotebookPanel,
+    activate?: boolean,
+    subshell?: boolean,
+  ): Promise<void> {
+    const options = {
+      path: widget.context.path,
+      preferredLanguage: widget.context.model.defaultKernelLanguage,
+      activate: activate,
+      subshell: subshell,
+      ref: widget.id,
+      insertMode: 'split-bottom',
+      type: 'Linked Console'
+    };
+    console.log("createIant options", options)
+
+    return commands.execute('notebook:create-iant', options);
   }
 
   /**

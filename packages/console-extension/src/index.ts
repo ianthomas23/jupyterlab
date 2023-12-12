@@ -362,6 +362,13 @@ async function activateConsole(
   async function createConsole(options: ICreateOptions): Promise<ConsolePanel> {
     await manager.ready;
 
+    console.log("XX createConsole", options)
+
+    if (options.subshell) {
+      //options.path = options.path + ":1"
+      console.log("SUBSHELL", options.subshell)
+    }
+
     const panel = new ConsolePanel({
       manager,
       contentFactory,
@@ -388,8 +395,32 @@ async function activateConsole(
     });
     panel.sessionContext.ready.then(async () => {
       if (options.subshell) {
+        console.log("CHECK A");
         const future = await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
+        console.log("CHECK B");
         future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+          console.log("CHECK C");  // Not sure this is ever called......
+          console.log("XX shell_id", msg.content.shell_id)
+          console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
+          console.log("XX msg.parent_header.session" , msg.parent_header.session)
+          console.log("XX session.id", panel.sessionContext.session?.id)
+          console.log("XX kernel", panel.sessionContext.session!.kernel)
+          //console.log("XX", panel.sessionContext.sessionManager)
+
+          //const man = panel.sessionContext.sessionManager;
+          //const
+          //man.connectTo(  options);
+
+
+          /*const model = find(manager.running(), item => {
+            return item.path === this._path;
+          });
+          if (model) {
+            try {
+              const session = manager.connectTo({ model });
+              this._handleNewSession(session);*/
+
+
           panel.sessionContext.session!.kernel!.shellId = msg.content.shell_id;
         };
       }

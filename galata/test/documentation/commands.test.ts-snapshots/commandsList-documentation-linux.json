@@ -1436,6 +1436,12 @@
     "shortcuts": []
   },
   {
+    "id": "notebook:create-iant",
+    "label": "New Iant Sub-Console for Notebook",
+    "caption": "",
+    "shortcuts": []
+  },
+  {
     "id": "notebook:create-new",
     "label": "Notebook",
     "caption": "Create a new notebook",

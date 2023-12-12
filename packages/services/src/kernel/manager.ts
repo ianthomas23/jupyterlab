@@ -123,6 +123,7 @@ export class KernelManager extends BaseManager implements Kernel.IManager {
       serverSettings: this.serverSettings
     });
     this._onStarted(kernelConnection);
+    console.log("XX looking for id in models", id)
     if (!this._models.has(id)) {
       // We trust the user to connect to an existing kernel, but we verify
       // asynchronously.
@@ -269,6 +270,7 @@ export class KernelManager extends BaseManager implements Kernel.IManager {
       return;
     }
 
+    console.log("XX requested models", models)
     this._models = new Map(models.map(x => [x.id, x]));
 
     // For any kernel connection to a kernel that doesn't exist, notify it of
