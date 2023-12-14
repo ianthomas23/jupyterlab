@@ -373,15 +373,7 @@ async function activateConsole(
     console.log("XX createConsole", options)
 
     if (options.subshell) {
-      //options.path = options.path + ":4321";
-      //options.path = "test_mpl.ipynb:iant";
-      //options.name = "test.ipynb:iant";
-      options.path = "test.ipynb:iant";
-      options.name = "test.ipynb:iant";  // Need port number here...
-      //options.name = "my_name";
-      //options.basePath = "base path";
-      console.log("SUBSHELL", options.subshell)
-
+      console.log("SUBSHELL", options)
 
 
 
@@ -398,71 +390,34 @@ async function activateConsole(
       console.log(w!.id, options.ref);  // yes, these are the same...*/
 
       // Want widget that matches id
-      const ws = shell.widgets()  //IterableIterator<Widget>
-      console.log(ws);
-      const widget = find(ws, ws => ws.id == options.ref!)
-      console.log("CHECK WIDGET", widget);
-      const widget2 = widget as NotebookPanel;
+      // More error checking needed.
+      const widget = find(shell.widgets(), widget => widget.id == options.ref!) as NotebookPanel
 
-
-
-      //panel.sessionContext.ready.then(async () => {   - async block needed...
-
-
-/*
-      widget2.sessionContext.ready.then(async () => {
-        const future = await widget2.sessionContext.session?.kernel?.requestCreateSubshell({})
-      //future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-
-        console.log("MSG", future)
-
+/*      widget.sessionContext.ready.then(async () => {
+        const future = await widget.sessionContext.session?.kernel?.requestCreateSubshell({});
+        console.log("MSG", future);
         future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
           console.log("MSG2", msg);
           console.log("PORT", msg.content.port);
+          const port = msg.content.port
+          options.path = options.path + ":" + port
+          options.name = options.path
         }
       })
 */
 
-
-      const future = await widget2.sessionContext.session?.kernel?.requestCreateSubshell({});
-      console.log("MSG", future)
-
+      const future = await widget.sessionContext.session?.kernel?.requestCreateSubshell({});
       future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
         console.log("MSG2", msg);
         console.log("PORT", msg.content.port);
+        const port = msg.content.port
+        options.path = options.path + ":" + port
+        options.name = options.path
       }
+      await future?.done;
 
+      // Probably want kernel name/type too?????
 
-      //const widget2 = widget as NotebookPanel
-
-      //const sc = widget!.context.sessionContext;
-      //console.log(sc);
-
-      //const shell_cw = shell.currentWidget;
-
-
-
-      //const session = await manager.sessions.findById(options.session!)
-      //console.log("IS THIS SESSION", session);
-
-      //const kernel = session?.kernel!
-      //const f = await kernel.requestCreateSubshell({})  // Needs to be an IKernelConnection...
-      //console.log(f);
-
-
-      //options.
-      //current.context.sessionContext.session?.kernel?.requestCreateSubshell({});
-
-
-      // Can I create my own session context
-      // No, need existing session, sessionContext, kernel, so can call requestCreateSubshell first
-      // which is a function of the kernel...
-      //const s = new SessionContext(
-
-
-
-      // find out how ConsolePanel creates/gets session/context/kernel and do the same first?
-      // better to get current kernel...
 
 
 
@@ -490,33 +445,6 @@ async function activateConsole(
       panel.sessionContext.propertyChanged.connect(() => {
         void tracker.save(panel);
       });
-      /*panel.sessionContext.ready.then(async () => {
-        if (options.subshell) {
-          console.log("CHECK A");
-          //const s = panel.sessionContext.session!
-          //const s2 = s.kernel
-          const future = await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
-          console.log("CHECK B");
-          future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-            console.log("CHECK C");  // Not sure this is ever called......
-            console.log("XX shell_id", msg.content.shell_id)
-            console.log("XX port", msg.content.port)  // This is where the port is available, too late!!!!
-            console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
-            console.log("XX msg.parent_header.session" , msg.parent_header.session)
-            console.log("XX session.id", panel.sessionContext.session?.id)
-            console.log("XX kernel", panel.sessionContext.session!.kernel)
-
-            const context = panel.sessionContext
-            console.log("CONTEXT", context)
-            const session = context.session
-            console.log("SESSION", session)
-            const kernel = session!.kernel
-            console.log("KERNEL", kernel)
-
-            panel.sessionContext.session!.kernel!.shellId = msg.content.shell_id;
-          };
-        }
-      });*/
 
       shell.add(panel, 'main', {
         ref: options.ref,
