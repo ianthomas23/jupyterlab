@@ -134,8 +134,6 @@ namespace CommandIDs {
 
   export const createSubConsole = 'notebook:create-sub-console';
 
-  export const createIant = 'notebook:create-iant';
-
   export const createOutputView = 'notebook:create-output-view';
 
   export const clearAllOutputs = 'notebook:clear-all-cell-outputs';
@@ -1223,58 +1221,6 @@ function activateCodeConsole(
         current,
         args['activate'] as boolean,
         true
-      );
-    },
-    isEnabled
-  });
-
-  commands.addCommand(CommandIDs.createIant, {
-    label: trans.__('New Iant command'),
-    execute: args => {
-      const current = tracker.currentWidget;
-
-      if (!current) {
-        return;
-      }
-
-      /*return Private.createIant(
-        commands,
-        current,
-        args['activate'] as boolean,
-        true
-      );*/
-
-
-      // Can't I use "current" to call create_subshell_request?
-
-      /*
-      const future = current.context.sessionContext.session?.kernel?.requestCreateSubshell({});
-      console.log("CHECK B", future);
-      future.onReply = (msg: ICreateSubshellReplyMsg): void => {
-        console.log("CHECK C");  // Not sure this is ever called......
-        console.log("XX shell_id", msg.content.shell_id)
-        console.log("XX port", msg.content.port)  // This is where the port is available, too late!!!!
-        console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
-        console.log("XX msg.parent_header.session" , msg.parent_header.session)
-      }
-*/
-
-
-      /*const kernel = current.context.sessionContext.session?.kernel?;
-      const future = await kernel.requestCreateSubshell({});
-      console.log("XX future", future);*/
-
-
-
-      // would like to have shell_port here...
-
-
-      console.log("XXX createIant");
-      return Private.createIant(
-        commands,
-        current,
-        args['activate'] as boolean,
-        1234,
       );
     },
     isEnabled
@@ -3044,7 +2990,6 @@ function populatePalette(
     CommandIDs.reconnectToKernel,
     CommandIDs.createConsole,
     CommandIDs.createSubConsole,
-    CommandIDs.createIant,
     CommandIDs.closeAndShutdown,
     CommandIDs.trust,
     CommandIDs.toggleCollapseCmd,
@@ -3162,11 +3107,6 @@ function populateMenus(
     isEnabled
   });
 
-  mainMenu.fileMenu.consoleCreators.add({
-    id: CommandIDs.createIant,
-    isEnabled
-  });
-
   // Add a close and shutdown command to the file menu.
   mainMenu.fileMenu.closeAndCleaners.add({
     id: CommandIDs.closeAndShutdown,
@@ -3240,25 +3180,6 @@ namespace Private {
     activate?: boolean,
     subshell?: boolean,
   ): Promise<void> {
-
-
-    /*if (subshell) {
-      const kernel = widget.context.sessionContext.session?.kernel
-      console.log("KERNEL", kernel)
-      //const future = await kernel?.requestCreateSubshell({});
-      //console.log("FUTURE", future)
-
-
-
-    }*/
-
-    //const w = widget.context.sessionContext.
-
-    //const session_id = widget.context.sessionContext!.session!.id;
-    //console.log("SESSION_ID", session_id)
-
-
-
     const options = {
       path: widget.context.path,
       preferredLanguage: widget.context.model.defaultKernelLanguage,
@@ -3267,40 +3188,7 @@ namespace Private {
       ref: widget.id,
       insertMode: 'split-bottom',
       type: 'Linked Console',
-      something: 23,
-      //session: session_id,
-      //sessionContext: widget.context.sessionContext,
     };
-    /*console.log("createConsole options", options)
-    console.log("WIDGET", widget)
-    console.log("WIDGET.context", widget.context)
-    console.log("WIDGET.sessionContext", widget.sessionContext)*/
-
-    return commands.execute('console:create', options);
-  }
-
-  export function createIant(
-    commands: CommandRegistry,
-    widget: NotebookPanel,
-    activate?: boolean,
-    shell_port?: number,  // actually this should be compulsory arg
-  ): Promise<void> {
-    const options = {
-      path: widget.context.path,
-      preferredLanguage: widget.context.model.defaultKernelLanguage,
-      activate: activate,
-      shell_port: shell_port,
-      ref: widget.id,
-      insertMode: 'split-bottom',
-      type: 'Linked Console'
-    };
-    console.log("XX createIant options", options)
-
-
-    // This is probably where need to process shell_port, but it is not async yet....
-
-
-
     return commands.execute('console:create', options);
   }
 

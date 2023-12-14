@@ -407,7 +407,10 @@ export class KernelConnection implements Kernel.IKernelConnection {
    * back, which will then clear the kernel restarting state.
    */
   private _sendMessage(msg: KernelMessage.IMessage, queue = true) {
-    console.log("_sendMessage", msg)
+    console.log("_sendMessage", msg);
+    // id is kernel_id, clientId is kernel_connection_id (session???????)
+    console.log("  extras", this._id, this._clientId);
+
     if (this.status === 'dead') {
       throw new Error('Kernel is dead');
     }

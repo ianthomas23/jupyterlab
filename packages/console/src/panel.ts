@@ -105,7 +105,7 @@ export class ConsolePanel extends MainAreaWidget<Panel> {
     this.title.icon = consoleIcon;
     this.title.closable = true;
     this.id = `console-${count}`;
-    console.log("Panel constructor end")
+    console.log("Panel constructor end, sessionContext", sessionContext)
   }
 
   /**

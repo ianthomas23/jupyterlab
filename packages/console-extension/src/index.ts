@@ -357,10 +357,9 @@ async function activateConsole(
      */
     subshell?: boolean;
 
-    subshell_port?: number;
-
-    sessionContext?: ISessionContext;
-
+    /**
+     * Id of session used to create new console panel, if a sub-shell.
+     */
     session?: string;
   }
 
@@ -377,52 +376,18 @@ async function activateConsole(
     if (options.subshell) {
       console.log("SUBSHELL", options)
 
-
-
-
-      /*const w = tracker.currentWidget;
-      console.log("current WIDGET", w);  // This is NULL
-      console.log(tracker.size)
-
-      console.log("SHELL", shell)
-      console.log(shell.currentWidget)*/
-
-      /*const w = shell.currentWidget;
-      console.log("current WIDGET", w);
-      console.log(w!.id, options.ref);  // yes, these are the same...*/
-
-      // Want widget that matches id
-      // More error checking needed.
+      // Need widget used to create new console so can use its kernel.
       const widget = find(shell.widgets(), widget => widget.id == options.ref!) as NotebookPanel
-
-/*      widget.sessionContext.ready.then(async () => {
-        const future = await widget.sessionContext.session?.kernel?.requestCreateSubshell({});
-        console.log("MSG", future);
-        future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-          console.log("MSG2", msg);
-          console.log("PORT", msg.content.port);
-          const port = msg.content.port
-          options.path = options.path + ":" + port
-          options.name = options.path
-        }
-      })
-*/
-
       const kernel = widget.sessionContext.session!.kernel!
       const future = await kernel.requestCreateSubshell({});
       future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-        console.log("MSG2", msg);
-        console.log("PORT", msg.content.port);
         const port = msg.content.port
+        console.log("PORT", port);
         options.path = options.path + ":" + port
         options.name = options.path
       }
       await future?.done;
 
-      // Probably want kernel name/type too?????
-      // options.kernelPreference
-
-      console.log("KERNEL NAME", kernel.name);
       kernelPreference = {name: kernel.name};
     }
 
@@ -449,6 +414,12 @@ async function activateConsole(
     // any kernel selection dialog, so we do not await panel.session.ready;
     await tracker.add(panel);
     panel.sessionContext.propertyChanged.connect(() => {
+
+
+      // Want the new session, not the old one...
+      console.log("PANEL SESSION", panel.sessionContext)
+
+
       void tracker.save(panel);
     });
 
