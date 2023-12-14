@@ -372,6 +372,8 @@ async function activateConsole(
 
     console.log("XX createConsole", options)
 
+    let kernelPreference: ISessionContext.IKernelPreference | undefined;
+
     if (options.subshell) {
       console.log("SUBSHELL", options)
 
@@ -406,7 +408,8 @@ async function activateConsole(
       })
 */
 
-      const future = await widget.sessionContext.session?.kernel?.requestCreateSubshell({});
+      const kernel = widget.sessionContext.session!.kernel!
+      const future = await kernel.requestCreateSubshell({});
       future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
         console.log("MSG2", msg);
         console.log("PORT", msg.content.port);
@@ -417,48 +420,16 @@ async function activateConsole(
       await future?.done;
 
       // Probably want kernel name/type too?????
+      // options.kernelPreference
 
-
-
-
-      const panel = new ConsolePanel({
-        manager,
-        contentFactory,
-        mimeTypeService: editorServices.mimeTypeService,
-        rendermime,
-        translator,
-        setBusy: (status && (() => status.setBusy())) ?? undefined,
-        ...(options as Partial<ConsolePanel.IOptions>)
-      });
-
-      const interactionMode: string = (
-        await settingRegistry.get(
-          '@jupyterlab/console-extension:tracker',
-          'interactionMode'
-        )
-      ).composite as string;
-      panel.console.node.dataset.jpInteractionMode = interactionMode;
-
-      // Add the console panel to the tracker. We want the panel to show up before
-      // any kernel selection dialog, so we do not await panel.session.ready;
-      await tracker.add(panel);
-      panel.sessionContext.propertyChanged.connect(() => {
-        void tracker.save(panel);
-      });
-
-      shell.add(panel, 'main', {
-        ref: options.ref,
-        mode: options.insertMode,
-        activate: options.activate !== false,
-        type: options.type ?? 'Console'
-      });
-      return panel;
+      console.log("KERNEL NAME", kernel.name);
+      kernelPreference = {name: kernel.name};
     }
-
 
     const panel = new ConsolePanel({
       manager,
       contentFactory,
+      kernelPreference,
       mimeTypeService: editorServices.mimeTypeService,
       rendermime,
       translator,
@@ -479,8 +450,6 @@ async function activateConsole(
     await tracker.add(panel);
     panel.sessionContext.propertyChanged.connect(() => {
       void tracker.save(panel);
-    });
-    panel.sessionContext.ready.then(async () => {
     });
 
     shell.add(panel, 'main', {
