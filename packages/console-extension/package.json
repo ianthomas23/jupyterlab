@@ -45,6 +45,7 @@
     "@jupyterlab/filebrowser": "^4.0.0-alpha.17",
     "@jupyterlab/launcher": "^4.0.0-alpha.17",
     "@jupyterlab/mainmenu": "^4.0.0-alpha.17",
+    "@jupyterlab/notebook": "^4.0.0-alpha.17",
     "@jupyterlab/rendermime": "^4.0.0-alpha.17",
     "@jupyterlab/services": "^7.0.0-alpha.17",
     "@jupyterlab/settingregistry": "^4.0.0-alpha.17",

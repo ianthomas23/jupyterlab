@@ -19,6 +19,7 @@ import {
   ISessionContext,
   ISessionContextDialogs,
   Sanitizer,
+  //SessionContext,
   sessionContextDialogs,
   showDialog,
   WidgetTracker
@@ -39,6 +40,7 @@ import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { consoleIcon } from '@jupyterlab/ui-components';
 import { find } from '@lumino/algorithm';
 import { KernelMessage } from '@jupyterlab/services';
+import { NotebookPanel } from '@jupyterlab/notebook'
 import {
   JSONExt,
   JSONObject,
@@ -354,6 +356,12 @@ async function activateConsole(
      * Whether to create a sub-shell for this console
      */
     subshell?: boolean;
+
+    subshell_port?: number;
+
+    sessionContext?: ISessionContext;
+
+    session?: string;
   }
 
   /**
@@ -365,9 +373,160 @@ async function activateConsole(
     console.log("XX createConsole", options)
 
     if (options.subshell) {
-      //options.path = options.path + ":1"
+      //options.path = options.path + ":4321";
+      //options.path = "test_mpl.ipynb:iant";
+      //options.name = "test.ipynb:iant";
+      options.path = "test.ipynb:iant";
+      options.name = "test.ipynb:iant";  // Need port number here...
+      //options.name = "my_name";
+      //options.basePath = "base path";
       console.log("SUBSHELL", options.subshell)
+
+
+
+
+
+      /*const w = tracker.currentWidget;
+      console.log("current WIDGET", w);  // This is NULL
+      console.log(tracker.size)
+
+      console.log("SHELL", shell)
+      console.log(shell.currentWidget)*/
+
+      /*const w = shell.currentWidget;
+      console.log("current WIDGET", w);
+      console.log(w!.id, options.ref);  // yes, these are the same...*/
+
+      // Want widget that matches id
+      const ws = shell.widgets()  //IterableIterator<Widget>
+      console.log(ws);
+      const widget = find(ws, ws => ws.id == options.ref!)
+      console.log("CHECK WIDGET", widget);
+      const widget2 = widget as NotebookPanel;
+
+
+
+      //panel.sessionContext.ready.then(async () => {   - async block needed...
+
+
+/*
+      widget2.sessionContext.ready.then(async () => {
+        const future = await widget2.sessionContext.session?.kernel?.requestCreateSubshell({})
+      //future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+
+        console.log("MSG", future)
+
+        future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+          console.log("MSG2", msg);
+          console.log("PORT", msg.content.port);
+        }
+      })
+*/
+
+
+      const future = await widget2.sessionContext.session?.kernel?.requestCreateSubshell({});
+      console.log("MSG", future)
+
+      future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+        console.log("MSG2", msg);
+        console.log("PORT", msg.content.port);
+      }
+
+
+      //const widget2 = widget as NotebookPanel
+
+      //const sc = widget!.context.sessionContext;
+      //console.log(sc);
+
+      //const shell_cw = shell.currentWidget;
+
+
+
+      //const session = await manager.sessions.findById(options.session!)
+      //console.log("IS THIS SESSION", session);
+
+      //const kernel = session?.kernel!
+      //const f = await kernel.requestCreateSubshell({})  // Needs to be an IKernelConnection...
+      //console.log(f);
+
+
+      //options.
+      //current.context.sessionContext.session?.kernel?.requestCreateSubshell({});
+
+
+      // Can I create my own session context
+      // No, need existing session, sessionContext, kernel, so can call requestCreateSubshell first
+      // which is a function of the kernel...
+      //const s = new SessionContext(
+
+
+
+      // find out how ConsolePanel creates/gets session/context/kernel and do the same first?
+      // better to get current kernel...
+
+
+
+      const panel = new ConsolePanel({
+        manager,
+        contentFactory,
+        mimeTypeService: editorServices.mimeTypeService,
+        rendermime,
+        translator,
+        setBusy: (status && (() => status.setBusy())) ?? undefined,
+        ...(options as Partial<ConsolePanel.IOptions>)
+      });
+
+      const interactionMode: string = (
+        await settingRegistry.get(
+          '@jupyterlab/console-extension:tracker',
+          'interactionMode'
+        )
+      ).composite as string;
+      panel.console.node.dataset.jpInteractionMode = interactionMode;
+
+      // Add the console panel to the tracker. We want the panel to show up before
+      // any kernel selection dialog, so we do not await panel.session.ready;
+      await tracker.add(panel);
+      panel.sessionContext.propertyChanged.connect(() => {
+        void tracker.save(panel);
+      });
+      /*panel.sessionContext.ready.then(async () => {
+        if (options.subshell) {
+          console.log("CHECK A");
+          //const s = panel.sessionContext.session!
+          //const s2 = s.kernel
+          const future = await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
+          console.log("CHECK B");
+          future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+            console.log("CHECK C");  // Not sure this is ever called......
+            console.log("XX shell_id", msg.content.shell_id)
+            console.log("XX port", msg.content.port)  // This is where the port is available, too late!!!!
+            console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
+            console.log("XX msg.parent_header.session" , msg.parent_header.session)
+            console.log("XX session.id", panel.sessionContext.session?.id)
+            console.log("XX kernel", panel.sessionContext.session!.kernel)
+
+            const context = panel.sessionContext
+            console.log("CONTEXT", context)
+            const session = context.session
+            console.log("SESSION", session)
+            const kernel = session!.kernel
+            console.log("KERNEL", kernel)
+
+            panel.sessionContext.session!.kernel!.shellId = msg.content.shell_id;
+          };
+        }
+      });*/
+
+      shell.add(panel, 'main', {
+        ref: options.ref,
+        mode: options.insertMode,
+        activate: options.activate !== false,
+        type: options.type ?? 'Console'
+      });
+      return panel;
     }
+
 
     const panel = new ConsolePanel({
       manager,
@@ -394,36 +553,6 @@ async function activateConsole(
       void tracker.save(panel);
     });
     panel.sessionContext.ready.then(async () => {
-      if (options.subshell) {
-        console.log("CHECK A");
-        const future = await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
-        console.log("CHECK B");
-        future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-          console.log("CHECK C");  // Not sure this is ever called......
-          console.log("XX shell_id", msg.content.shell_id)
-          console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
-          console.log("XX msg.parent_header.session" , msg.parent_header.session)
-          console.log("XX session.id", panel.sessionContext.session?.id)
-          console.log("XX kernel", panel.sessionContext.session!.kernel)
-          //console.log("XX", panel.sessionContext.sessionManager)
-
-          //const man = panel.sessionContext.sessionManager;
-          //const
-          //man.connectTo(  options);
-
-
-          /*const model = find(manager.running(), item => {
-            return item.path === this._path;
-          });
-          if (model) {
-            try {
-              const session = manager.connectTo({ model });
-              this._handleNewSession(session);*/
-
-
-          panel.sessionContext.session!.kernel!.shellId = msg.content.shell_id;
-        };
-      }
     });
 
     shell.add(panel, 'main', {

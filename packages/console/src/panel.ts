@@ -36,6 +36,7 @@ export class ConsolePanel extends MainAreaWidget<Panel> {
    */
   constructor(options: ConsolePanel.IOptions) {
     super({ content: new Panel() });
+    console.log("Panel constructor start")
     this.addClass(PANEL_CLASS);
     let {
       rendermime,
@@ -87,11 +88,13 @@ export class ConsolePanel extends MainAreaWidget<Panel> {
     this.content.addWidget(this.console);
 
     void sessionContext.initialize().then(async value => {
+      console.log("Panel constructor init - start")
       if (value) {
         await sessionContextDialogs.selectKernel(sessionContext!);
       }
       this._connected = new Date();
       this._updateTitlePanel();
+      console.log("Panel constructor init - end")
     });
 
     this.console.executed.connect(this._onExecuted, this);
@@ -102,6 +105,7 @@ export class ConsolePanel extends MainAreaWidget<Panel> {
     this.title.icon = consoleIcon;
     this.title.closable = true;
     this.id = `console-${count}`;
+    console.log("Panel constructor end")
   }
 
   /**
@@ -152,6 +156,7 @@ export class ConsolePanel extends MainAreaWidget<Panel> {
    * Handle a console execution.
    */
   private _onExecuted(sender: CodeConsole, args: Date) {
+    console.log("ConsolePanel._onExecuted")
     this._executed = args;
     this._updateTitlePanel();
   }

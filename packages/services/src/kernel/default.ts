@@ -407,6 +407,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
    * back, which will then clear the kernel restarting state.
    */
   private _sendMessage(msg: KernelMessage.IMessage, queue = true) {
+    console.log("_sendMessage", msg)
     if (this.status === 'dead') {
       throw new Error('Kernel is dead');
     }
@@ -440,7 +441,10 @@ export class KernelConnection implements Kernel.IKernelConnection {
       this.connectionStatus === 'connected' &&
       this._kernelSession !== RESTARTING_KERNEL_SESSION
     ) {
-      this._ws!.send(serialize(msg, this._ws!.protocol));
+      const s = serialize(msg, this._ws!.protocol);
+      console.log("serialized", s);
+      this._ws!.send(s);
+      //this._ws!.send(serialize(msg, this._ws!.protocol));
     } else if (queue) {
       this._pendingMessages.push(msg);
     } else {

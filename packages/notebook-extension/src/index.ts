@@ -105,6 +105,8 @@ import { DisposableSet, IDisposable } from '@lumino/disposable';
 import { Message, MessageLoop } from '@lumino/messaging';
 import { Menu, Panel, Widget } from '@lumino/widgets';
 import { logNotebookOutput } from './nboutput';
+//import { KernelMessage } from '@jupyterlab/services';
+
 
 /**
  * The command IDs used by the notebook plugin.
@@ -1241,12 +1243,38 @@ function activateCodeConsole(
         args['activate'] as boolean,
         true
       );*/
+
+
+      // Can't I use "current" to call create_subshell_request?
+
+      /*
+      const future = current.context.sessionContext.session?.kernel?.requestCreateSubshell({});
+      console.log("CHECK B", future);
+      future.onReply = (msg: ICreateSubshellReplyMsg): void => {
+        console.log("CHECK C");  // Not sure this is ever called......
+        console.log("XX shell_id", msg.content.shell_id)
+        console.log("XX port", msg.content.port)  // This is where the port is available, too late!!!!
+        console.log("XX msg.header.session", msg.header.session)  // presumably this the same as parent_header.session
+        console.log("XX msg.parent_header.session" , msg.parent_header.session)
+      }
+*/
+
+
+      /*const kernel = current.context.sessionContext.session?.kernel?;
+      const future = await kernel.requestCreateSubshell({});
+      console.log("XX future", future);*/
+
+
+
+      // would like to have shell_port here...
+
+
       console.log("XXX createIant");
-      return Private.createConsole(
+      return Private.createIant(
         commands,
         current,
         args['activate'] as boolean,
-        true
+        1234,
       );
     },
     isEnabled
@@ -3212,6 +3240,25 @@ namespace Private {
     activate?: boolean,
     subshell?: boolean,
   ): Promise<void> {
+
+
+    /*if (subshell) {
+      const kernel = widget.context.sessionContext.session?.kernel
+      console.log("KERNEL", kernel)
+      //const future = await kernel?.requestCreateSubshell({});
+      //console.log("FUTURE", future)
+
+
+
+    }*/
+
+    //const w = widget.context.sessionContext.
+
+    //const session_id = widget.context.sessionContext!.session!.id;
+    //console.log("SESSION_ID", session_id)
+
+
+
     const options = {
       path: widget.context.path,
       preferredLanguage: widget.context.model.defaultKernelLanguage,
@@ -3219,9 +3266,15 @@ namespace Private {
       subshell: subshell,
       ref: widget.id,
       insertMode: 'split-bottom',
-      type: 'Linked Console'
+      type: 'Linked Console',
+      something: 23,
+      //session: session_id,
+      //sessionContext: widget.context.sessionContext,
     };
-    console.log("createConsole options", options)
+    /*console.log("createConsole options", options)
+    console.log("WIDGET", widget)
+    console.log("WIDGET.context", widget.context)
+    console.log("WIDGET.sessionContext", widget.sessionContext)*/
 
     return commands.execute('console:create', options);
   }
@@ -3230,20 +3283,25 @@ namespace Private {
     commands: CommandRegistry,
     widget: NotebookPanel,
     activate?: boolean,
-    subshell?: boolean,
+    shell_port?: number,  // actually this should be compulsory arg
   ): Promise<void> {
     const options = {
       path: widget.context.path,
       preferredLanguage: widget.context.model.defaultKernelLanguage,
       activate: activate,
-      subshell: subshell,
+      shell_port: shell_port,
       ref: widget.id,
       insertMode: 'split-bottom',
       type: 'Linked Console'
     };
-    console.log("createIant options", options)
+    console.log("XX createIant options", options)
 
-    return commands.execute('notebook:create-iant', options);
+
+    // This is probably where need to process shell_port, but it is not async yet....
+
+
+
+    return commands.execute('console:create', options);
   }
 
   /**

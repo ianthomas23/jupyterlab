@@ -1205,6 +1205,7 @@ export function isDebugRequestMsg(msg: IMessage): msg is IDebugRequestMsg {
 export interface ICreateSubshellReplyMsg extends IControlMessage<'create_subshell_reply'> {
   content: {
     shell_id: string;
+    port: number;
   };
 }
 
