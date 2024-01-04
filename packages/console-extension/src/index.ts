@@ -38,6 +38,8 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { consoleIcon, IFormRendererRegistry } from '@jupyterlab/ui-components';
 import { find } from '@lumino/algorithm';
+import { KernelMessage } from '@jupyterlab/services';
+import { NotebookPanel } from '@jupyterlab/notebook'
 import {
   JSONExt,
   JSONObject,
@@ -357,6 +359,16 @@ async function activateConsole(
      * Its typical value is: a factory name or the widget id (if singleton)
      */
     type?: string;
+
+    /**
+     * Whether to create a sub-shell for this console
+     */
+    subshell?: boolean;
+
+    /**
+     * Id of session used to create new console panel, if a sub-shell.
+     */
+    session?: string;
   }
 
   /**
@@ -365,9 +377,27 @@ async function activateConsole(
   async function createConsole(options: ICreateOptions): Promise<ConsolePanel> {
     await manager.ready;
 
+    let kernelPreference: ISessionContext.IKernelPreference | undefined;
+
+    if (options.subshell) {
+      // Need widget used to create new console so can use its kernel.
+      const widget = find(shell.widgets(), widget => widget.id == options.ref!) as NotebookPanel
+      const kernel = widget.sessionContext.session!.kernel!
+      const future = await kernel.requestCreateSubshell({});
+      future!.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
+        const port = msg.content.port
+        options.path = options.path + ":" + port
+        options.name = options.path
+      }
+      await future?.done;
+
+      kernelPreference = {name: kernel.name};
+    }
+
     const panel = new ConsolePanel({
       manager,
       contentFactory,
+      kernelPreference,
       mimeTypeService: editorServices.mimeTypeService,
       rendermime,
       sessionDialogs,
