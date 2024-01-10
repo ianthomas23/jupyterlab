@@ -736,6 +736,35 @@ export class KernelConnection implements Kernel.IKernelConnection {
   }
 
   /**
+   * Send an experimental `create_subshell_request` message.
+   *
+   * @hidden
+   */
+  requestCreateSubshell(
+    content: KernelMessage.ICreateSubshellRequestMsg['content'],
+    disposeOnDone: boolean = true
+  ): Kernel.IControlFuture<
+    KernelMessage.ICreateSubshellRequestMsg,
+    KernelMessage.ICreateSubshellReplyMsg
+  > {
+    const msg = KernelMessage.createMessage({
+      msgType: 'create_subshell_request',
+      channel: 'control',
+      username: this._username,
+      session: this._clientId,
+      content
+    });
+    return this.sendControlMessage(
+      msg,
+      true,
+      disposeOnDone
+    ) as Kernel.IControlFuture<
+      KernelMessage.ICreateSubshellRequestMsg,
+      KernelMessage.ICreateSubshellReplyMsg
+    >;
+  }
+
+  /**
    * Send an experimental `debug_request` message.
    *
    * @hidden

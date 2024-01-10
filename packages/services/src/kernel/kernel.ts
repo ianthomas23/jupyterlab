@@ -300,6 +300,25 @@ export interface IKernelConnection extends IObservableDisposable {
   >;
 
   /**
+   * Send an experimental `create_subshell_request` message.
+   *
+   * @hidden
+   *
+   * @param content - The content of the request.
+   *
+   * @param disposeOnDone - Whether to dispose of the future when done.
+   *
+   * @returns A kernel future.
+   */
+  requestCreateSubshell(
+    content: KernelMessage.ICreateSubshellRequestMsg['content'],
+    disposeOnDone?: boolean
+  ): IControlFuture<
+    KernelMessage.ICreateSubshellRequestMsg,
+    KernelMessage.ICreateSubshellReplyMsg
+  >;
+
+  /**
    * Send an experimental `debug_request` message.
    *
    * @hidden
