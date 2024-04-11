@@ -25,6 +25,7 @@ export class KernelManager extends BaseManager implements Kernel.IManager {
    */
   constructor(options: KernelManager.IOptions = {}) {
     super(options);
+    console.log("==> KernelManager.constructor", options)
 
     // Start model and specs polling with exponential backoff.
     this._pollModels = new Poll({
@@ -107,6 +108,8 @@ export class KernelManager extends BaseManager implements Kernel.IManager {
   ): Kernel.IKernelConnection {
     const { id } = options.model;
 
+    console.log("==> KernelManager.connectTo", id)
+
     let handleComms = options.handleComms ?? true;
     // By default, handle comms only if no other kernel connection is.
     if (options.handleComms === undefined) {
@@ -175,6 +178,9 @@ export class KernelManager extends BaseManager implements Kernel.IManager {
       'model' | 'serverSettings'
     > = {}
   ): Promise<Kernel.IKernelConnection> {
+
+    console.log("==> KernelManager.startNew", createOptions)
+
     const model = await startNew(createOptions, this.serverSettings);
     return this.connectTo({
       ...connectOptions,

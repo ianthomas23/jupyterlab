@@ -26,6 +26,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
    */
   constructor(options: TerminalManager.IOptions = {}) {
     super(options);
+    console.log("==> TerminalManager.constructor")
 
     // Check if terminals are available
     if (!this.isAvailable()) {
@@ -52,6 +53,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
       await this._pollModels.start();
       await this._pollModels.tick;
       this._isReady = true;
+      console.log("==> TerminalManager is ready")
     })();
   }
 
@@ -121,6 +123,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
   connectTo(
     options: Omit<Terminal.ITerminalConnection.IOptions, 'serverSettings'>
   ): Terminal.ITerminalConnection {
+    console.log("==> TerminalManager.connectTo", options)
     const terminalConnection = new TerminalConnection({
       ...options,
       serverSettings: this.serverSettings
@@ -173,7 +176,10 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
   async startNew(
     options?: Terminal.ITerminal.IOptions
   ): Promise<Terminal.ITerminalConnection> {
-    const model = await startNew(
+
+    console.log("==> TerminalManager.startNew", options)
+
+    const model = await startNew(  // Calls startNew in REST API
       this.serverSettings,
       options?.name,
       options?.cwd

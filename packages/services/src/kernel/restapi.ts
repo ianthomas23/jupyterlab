@@ -97,6 +97,9 @@ export async function startNew(
   settings: ServerConnection.ISettings = ServerConnection.makeSettings()
 ): Promise<IModel> {
   const url = URLExt.join(settings.baseUrl, KERNEL_SERVICE_URL);
+
+  console.log("==> startNew", options, url)
+
   const init = {
     method: 'POST',
     body: JSON.stringify(options)

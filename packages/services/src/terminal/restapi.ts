@@ -45,6 +45,10 @@ export async function startNew(
 ): Promise<IModel> {
   Private.errorIfNotAvailable();
   const url = URLExt.join(settings.baseUrl, TERMINAL_SERVICE_URL);
+
+  console.log("==> startNew", url)  // Post to REST API to start a new terminal.
+                                    // Presumably handled by jupyter-server-terminals
+
   const init = {
     method: 'POST',
     body: JSON.stringify({ name, cwd })
@@ -57,6 +61,9 @@ export async function startNew(
   }
   const data = await response.json();
   // TODO: Validate model
+
+  console.log("  data", data)
+
   return data;
 }
 

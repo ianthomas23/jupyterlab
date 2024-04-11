@@ -46,6 +46,9 @@ export class KernelConnection implements Kernel.IKernelConnection {
    * Construct a kernel object.
    */
   constructor(options: Kernel.IKernelConnection.IOptions) {
+
+    console.log("==> KernelConnection.constructor", options.serverSettings)
+
     this._name = options.model.name;
     this._id = options.model.id;
     this.serverSettings =
