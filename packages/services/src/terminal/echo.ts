@@ -62,7 +62,7 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
   }
 
   get messageReceived(): ISignal<this, Terminal.IMessage> {
-    console.log("==> messageReceived", this._messageReceived)
+    //console.log("==> messageReceived", this._messageReceived)
     return this._messageReceived;
   }
 
@@ -81,11 +81,6 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
 
   send(message: Terminal.IMessage): void {
     this._echo_shell.receive(message);
-    //console.log("==> send",  message)
-    // type 'set_size', 'stdin'
-
-
-    // echo it  back?
   }
 
   async shutdown(): Promise<void> {

@@ -3,6 +3,8 @@ import { Signal } from '@lumino/signaling';
 
 import { IMessage, ITerminalConnection } from './terminal';
 
+import bashEmulator from "bash-emulator"
+
 
 
 export class EchoShell {
@@ -12,6 +14,44 @@ export class EchoShell {
     this._prompt = "\x1b[1;31mjs-shell:$\x1b[1;0m "
     this._signal = signal;
 
+    // Really want delayed initialisation of this.
+    this._shell = bashEmulator({
+      workingDirectory: '/home/someone',
+      fileSystem: {
+        '/': {
+          type: 'dir',
+          modified: Date.now(),
+        },
+        '/home': {
+          type: 'dir',
+          modified: Date.now(),
+        },
+        '/home/someone': {
+          type: 'dir',
+          modified: Date.now(),
+        },
+        '/home/someone/file1': {
+          type: 'file',
+          modified: Date.now(),
+          content: 'This is the file contents',
+        },
+        '/home/someone/other': {
+          type: 'file',
+          modified: Date.now(),
+          content: 'Something',
+        },
+        '/home/someone/subdir': {
+          type: 'dir',
+          modified: Date.now(),
+        },
+        '/home/someone/subdir/subfile': {
+          type: 'file',
+          modified: Date.now(),
+          content: 'Blah blah',
+        },
+      }
+    })
+
     /*if (this._prompt) {
       console.log("START")
       this.send_stdout([this._prompt])
@@ -20,7 +60,7 @@ export class EchoShell {
 
   // For jupyter-server-terminals it is terminado that handles messages.
   async receive(message: IMessage) {
-    console.log("message_type", message.type);
+    //console.log("message_type", message.type);
     if (message.type == "set_size") {
 
     }
@@ -36,14 +76,15 @@ export class EchoShell {
 
           const res = await this._run_command(this._current_line);
           if (res) {
-            this.send_stdout([res + "\r\n"]);
+            const split = res.split("\n")
+            const joined = split.join("\r\n")
+            this.send_stdout([joined + "\r\n"])
           }
           this._current_line = "";
 
           this.send_stdout([this._prompt]);
         } else {
           this._current_line += char;
-          console.log(`char #${char}# current_line ${this._current_line}$`);
           // Echo character back
           this.send_stdout([char]);
         }
@@ -52,7 +93,15 @@ export class EchoShell {
   }
 
   async _run_command(command: string): Promise<string> {
-    return command.toUpperCase();
+    //return command.toUpperCase();
+    let result: string;
+    try {
+      result = await this._shell.run(command);
+    }
+    catch(e) {
+      result = e;
+    }
+    return result;
   }
 
   send_stdout(content: JSONPrimitive[]): void {
@@ -63,4 +112,5 @@ export class EchoShell {
   private _current_line: string;
   private _prompt: string;
   private _signal: Signal<ITerminalConnection, IMessage>;
+  private _shell: any;
 }
