@@ -31,6 +31,10 @@ export class EchoShell {
           this.send_stdout(["\r\n"]);
 
           // await results of running command.
+          const res = this._run_command(this._current_line);
+          if (res) {
+            this.send_stdout([res + "\r\n"]);
+          }
 
           this.send_stdout([this._prompt]);
         } else {
@@ -41,6 +45,12 @@ export class EchoShell {
         }
       }
     }
+  }
+
+  _run_command(command: string): string {
+
+    return "COMMAND RESULT";
+
   }
 
   send_stdout(content: JSONPrimitive[]): void {
