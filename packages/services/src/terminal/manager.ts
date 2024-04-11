@@ -15,7 +15,9 @@ import {
   shutdownTerminal,
   startNew
 } from './restapi';
-import { TerminalConnection } from './default';
+
+//import { TerminalConnection } from './default';
+import { EchoTerminalConnection as TerminalConnection } from './echo';
 
 /**
  * A terminal session manager.
@@ -26,7 +28,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
    */
   constructor(options: TerminalManager.IOptions = {}) {
     super(options);
-    console.log("==> TerminalManager.constructor")
+    console.log('==> TerminalManager.constructor');
 
     // Check if terminals are available
     if (!this.isAvailable()) {
@@ -53,7 +55,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
       await this._pollModels.start();
       await this._pollModels.tick;
       this._isReady = true;
-      console.log("==> TerminalManager is ready")
+      console.log('==> TerminalManager is ready');
     })();
   }
 
@@ -123,7 +125,7 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
   connectTo(
     options: Omit<Terminal.ITerminalConnection.IOptions, 'serverSettings'>
   ): Terminal.ITerminalConnection {
-    console.log("==> TerminalManager.connectTo", options)
+    console.log('==> TerminalManager.connectTo', options);
     const terminalConnection = new TerminalConnection({
       ...options,
       serverSettings: this.serverSettings
@@ -176,10 +178,10 @@ export class TerminalManager extends BaseManager implements Terminal.IManager {
   async startNew(
     options?: Terminal.ITerminal.IOptions
   ): Promise<Terminal.ITerminalConnection> {
+    console.log('==> TerminalManager.startNew', options);
 
-    console.log("==> TerminalManager.startNew", options)
-
-    const model = await startNew(  // Calls startNew in REST API
+    const model = await startNew(
+      // Calls startNew in REST API
       this.serverSettings,
       options?.name,
       options?.cwd
