@@ -92,19 +92,17 @@ export class EchoShell {
 
           this.send_stdout([this._prompt]);
         }
-        /*else if (code == 127) {
+        else if (code == 127) {
           console.log("BACKSPACE")
           if (this._current_line.length > 0) {
             this._current_line = this._current_line.slice(0, -1);
           }
-          //this.send_stdout(["\x1b[1;31m"]);
-          //this.send_stdout(["\x08\x7f"]);
-          this.send_stdout(["\x1b[#2"])
-        }*/
+          this.send_stdout(["\x1B[0G" + this._prompt + this._current_line + " " + "\x1B[1D"])
+        }
         else {
           this._current_line += char;
-          // Echo character back
-          this.send_stdout([char]);
+          // Send whole line.
+          this.send_stdout(["\x1B[0G" + this._prompt + this._current_line])
         }
       }
     }
