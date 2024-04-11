@@ -38,12 +38,12 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
   }
 
   get connectionStatus(): Terminal.ConnectionStatus {
-    //console.log("==> connectionStatus")
+    //console.log("==> connectionStatus", this._connectionStatus)
     return this._connectionStatus;
   }
 
   get connectionStatusChanged(): ISignal<this, Terminal.ConnectionStatus> {
-    //console.log("==> connectionStatusChanged")
+    //console.log("==> connectionStatusChanged", this._connectionStatusChanged)
     return this._connectionStatusChanged;
   }
 
