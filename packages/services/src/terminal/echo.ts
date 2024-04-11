@@ -4,6 +4,7 @@ import { ServerConnection } from '..';
 
 import * as Terminal from './terminal';
 
+import { EchoShell } from './echo_shell'
 
 export class EchoTerminalConnection implements Terminal.ITerminalConnection {
   constructor(options: Terminal.ITerminalConnection.IOptions) {
@@ -13,6 +14,7 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
     //this._name = options.model.name;
     this._name = "echo_terminal_name";
 
+    // Maybe should be using these server settings for remote comms?
     //this.serverSettings = options.serverSettings ?? ServerConnection.makeSettings();
     this.serverSettings = options.serverSettings!;
     console.log("==>   serverSettings", this.serverSettings)
@@ -30,6 +32,9 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
       WebSocket: {},
       serializer: null
     }*/
+
+    this._echo_shell = new EchoShell(this._messageReceived);
+    console.log("shell created", this._echo_shell);
   }
 
   get connectionStatus(): Terminal.ConnectionStatus {
@@ -75,8 +80,12 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
   }
 
   send(message: Terminal.IMessage): void {
-    console.log("==> send",  message)
+    this._echo_shell.receive(message);
+    //console.log("==> send",  message)
     // type 'set_size', 'stdin'
+
+
+    // echo it  back?
   }
 
   async shutdown(): Promise<void> {
@@ -92,4 +101,5 @@ export class EchoTerminalConnection implements Terminal.ITerminalConnection {
   private _messageReceived = new Signal<this, Terminal.IMessage>(this);
 
   private _name: string;
+  private _echo_shell: EchoShell
 }
