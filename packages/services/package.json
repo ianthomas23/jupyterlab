@@ -55,6 +55,7 @@
     "@lumino/polling": "^2.1.2",
     "@lumino/properties": "^2.0.1",
     "@lumino/signaling": "^2.1.2",
+    "bash-emulator": "~1.1.0",
     "ws": "^8.11.0"
   },
   "devDependencies": {

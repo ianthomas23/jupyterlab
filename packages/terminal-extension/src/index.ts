@@ -36,6 +36,8 @@ import {
 } from '@jupyterlab/ui-components';
 import { Menu, Widget } from '@lumino/widgets';
 
+import { iant_listing } from './listing'
+
 /**
  * The command IDs used by the terminal plugin.
  */
@@ -99,12 +101,24 @@ function activate(
   runningSessionManagers: IRunningSessionManagers | null
 ): ITerminalTracker {
   const trans = translator.load('jupyterlab');
-  const { serviceManager, commands } = app;
+  const { docRegistry, serviceManager, commands } = app;
   const category = trans.__('Terminal');
   const namespace = 'terminal';
   const tracker = new WidgetTracker<MainAreaWidget<ITerminal.ITerminal>>({
     namespace
   });
+
+  console.log('==> TerminalExtension.activate');
+  console.log('App', app);
+  console.log('ServiceManager:', serviceManager); // ServiceManager.IManager
+  const { contents } = serviceManager;
+  console.log('Contents', contents); // Contents.IManager, has a _defaultDrive: IDrive
+  //console.log("  driveName", contents.driveName, "localPath", contents.localPath);
+  // https://jupyter-server.readthedocs.io/en/latest/developers/contents.html#required-methods
+  //console.log(await contents.get("LICENSE"))
+  //console.log(contents.get("/LICENSE"))
+  //console.log(contents.get("./LICENSE"))
+  iant_listing(docRegistry, serviceManager);
 
   // Bail if there are no terminals available.
   if (!serviceManager.terminals.isAvailable()) {

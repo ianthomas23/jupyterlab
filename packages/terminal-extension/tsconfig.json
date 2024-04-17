@@ -3,15 +3,25 @@
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
-    "types": ["webpack-env"]
+    "types": [
+      "webpack-env"
+    ]
   },
-  "include": ["src/*"],
+  "include": [
+    "src/*"
+  ],
   "references": [
     {
       "path": "../application"
     },
     {
       "path": "../apputils"
+    },
+    {
+      "path": "../docmanager"
+    },
+    {
+      "path": "../docregistry"
     },
     {
       "path": "../launcher"
