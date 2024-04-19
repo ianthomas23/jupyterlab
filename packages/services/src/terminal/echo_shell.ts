@@ -3,9 +3,8 @@ import { Signal } from '@lumino/signaling';
 
 import { IMessage, ITerminalConnection } from './terminal';
 
-import bashEmulator from 'bash-emulator';
-
-//import type { JupyterFrontEnd } from '@jupyterlab/application';
+import { Shell } from './cockle_index'
+import { JupyterFileSystem } from './jupyter_file_system'
 
 export class EchoShell {
   constructor(signal: Signal<ITerminalConnection, IMessage>) {
@@ -13,68 +12,19 @@ export class EchoShell {
     this._current_line = '';
     this._prompt = '\x1b[1;31mjs-shell:$\x1b[1;0m '; // red color.
     this._signal = signal;
-
-    // galata/extension/src/global.ts
-    /*get app(): JupyterFrontEnd {
-      if (!this._app) {
-        this._app = window.jupyterapp;
-      }
-      return this._app;
-    }
-
-    private _app: JupyterFrontEnd;*/
-
-    const w = window;
-    console.log('window', w); // window.jupyterapp exists, but not good to use it.
-
-    //const app: JupyterFrontEnd = window.jupyterapp;
-
-    //const { jupyterapp } = w;
-    //console.log("app", app);
-
-    //const PP = window //.jupyterapp;  // JupyterFrontEnd
-    //console.log("APP", app)
   }
 
   _initialize(): void {
     if (this._shell) return;
 
-    this._shell = bashEmulator({
-      workingDirectory: '/home/someone',
-      fileSystem: {
-        '/': {
-          type: 'dir',
-          modified: Date.now()
-        },
-        '/home': {
-          type: 'dir',
-          modified: Date.now()
-        },
-        '/home/someone': {
-          type: 'dir',
-          modified: Date.now()
-        },
-        '/home/someone/file1': {
-          type: 'file',
-          modified: Date.now(),
-          content: 'This is the file contents'
-        },
-        '/home/someone/other': {
-          type: 'file',
-          modified: Date.now(),
-          content: 'Something'
-        },
-        '/home/someone/subdir': {
-          type: 'dir',
-          modified: Date.now()
-        },
-        '/home/someone/subdir/subfile': {
-          type: 'file',
-          modified: Date.now(),
-          content: 'Blah blah'
-        }
-      }
-    });
+    // to create Shell object, need a JupyterFileSystem which needs a Contents.IManager
+    // In dev-mode only
+    const w = window as any
+    const contentsManager = w.jupyterapp.serviceManager.contents as any
+    console.log("CONTENTS MANAGER", contentsManager)
+
+    const fs = new JupyterFileSystem(contentsManager)
+    this._shell = new Shell(fs)
 
     if (this._prompt) {
       this.send_stdout([this._prompt]);
@@ -130,7 +80,7 @@ export class EchoShell {
     //return command.toUpperCase();
     let result: string;
     try {
-      result = await this._shell.run(command);
+      result = await this._shell!.execute(command);
     } catch (e) {
       result = e;
     }
@@ -144,5 +94,5 @@ export class EchoShell {
   private _current_line: string;
   private _prompt: string;
   private _signal: Signal<ITerminalConnection, IMessage>;
-  private _shell?: any;
+  private _shell?: Shell;
 }
