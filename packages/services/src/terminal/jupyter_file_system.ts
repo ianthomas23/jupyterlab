@@ -1,19 +1,29 @@
 //import { Contents } from '@jupyterlab/services';
-import { Contents } from '../contents'
+import { Contents } from '../contents';
 
-import { IFileSystem } from "./file_system"
+import { IFileSystem } from './file_system';
 
 export class JupyterFileSystem implements IFileSystem {
   constructor(contentsManager: Contents.IManager) {
-    this._contentsManager = contentsManager
+    this._contentsManager = contentsManager;
+  }
+
+  async delete(path: string): Promise<void> {
+    await this._contentsManager.delete(path);
   }
 
   async list(path: string): Promise<string[]> {
-    const listing = await this._contentsManager.get(path)
-    const content = listing.content as Contents.IModel[]
-    const filenames = content.map((model) => model.name)
-    return filenames.sort()
+    const listing = await this._contentsManager.get(path);
+    const content = listing.content as Contents.IModel[];
+    const filenames = content.map(model => model.name);
+    return filenames.sort();
   }
 
-  private _contentsManager: Contents.IManager
+  async touch(path: string): Promise<void> {
+    // Assume new file
+    const model = await this._contentsManager.newUntitled();
+    await this._contentsManager.rename(model.path, path);
+  }
+
+  private _contentsManager: Contents.IManager;
 }
