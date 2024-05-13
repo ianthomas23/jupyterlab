@@ -587,6 +587,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content: {}
     });
     let reply: KernelMessage.IInfoReplyMsg | undefined;
@@ -644,6 +645,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content
     });
     return Private.handleShellMessage(
@@ -669,6 +671,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content: content
     });
     return Private.handleShellMessage(
@@ -694,6 +697,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content
     });
     return Private.handleShellMessage(
@@ -831,6 +835,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content
     });
     return Private.handleShellMessage(
@@ -854,6 +859,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'shell',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content
     });
     return Private.handleShellMessage(
@@ -877,6 +883,7 @@ export class KernelConnection implements Kernel.IKernelConnection {
       channel: 'stdin',
       username: this._username,
       session: this._clientId,
+      subshellId: this._subshellId,
       content
     });
     msg.parent_header = parent_header;

@@ -147,19 +147,23 @@ export function createMessage<T extends ICreateSubshellReplyMsg>(
 ): T;
 
 export function createMessage<T extends Message>(options: IOptions<T>): T {
+  const header: IHeader<MessageType> = {
+    date: new Date().toISOString(),
+    msg_id: options.msgId ?? UUID.uuid4(),
+    msg_type: options.msgType,
+    session: options.session,
+    username: options.username ?? '',
+    version: '5.2'
+  }
+  // Only include subshellId if it is a string or null.
+  if (options.subshellId !== undefined) {
+    header["subshell_id"] = options.subshellId;
+  }
   return {
     buffers: options.buffers ?? [],
     channel: options.channel,
     content: options.content,
-    header: {
-      date: new Date().toISOString(),
-      msg_id: options.msgId ?? UUID.uuid4(),
-      msg_type: options.msgType,
-      session: options.session,
-      username: options.username ?? '',
-      subshell_id: options.subshellId,
-      version: '5.2'
-    },
+    header,
     metadata: options.metadata ?? {},
     parent_header: options.parentHeader ?? {}
   } as T;
@@ -288,7 +292,7 @@ export interface IHeader<T extends MessageType = MessageType> {
   /**
    * Subshell id identifying a subshell if not in main shell
    */
-  subshell_id?: string;
+  subshell_id?: string | null;
 }
 
 /**
