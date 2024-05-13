@@ -2644,18 +2644,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jupyterlab/console-extension@workspace:packages/console-extension"
   dependencies:
-    "@jupyterlab/application": ^4.3.0-alpha.0
-    "@jupyterlab/apputils": ^4.4.0-alpha.0
-    "@jupyterlab/codeeditor": ^4.3.0-alpha.0
-    "@jupyterlab/completer": ^4.3.0-alpha.0
-    "@jupyterlab/console": ^4.3.0-alpha.0
-    "@jupyterlab/filebrowser": ^4.3.0-alpha.0
-    "@jupyterlab/launcher": ^4.3.0-alpha.0
-    "@jupyterlab/mainmenu": ^4.3.0-alpha.0
-    "@jupyterlab/rendermime": ^4.3.0-alpha.0
-    "@jupyterlab/settingregistry": ^4.3.0-alpha.0
-    "@jupyterlab/translation": ^4.3.0-alpha.0
-    "@jupyterlab/ui-components": ^4.3.0-alpha.0
+    "@jupyterlab/application": ^4.2.0
+    "@jupyterlab/apputils": ^4.3.0
+    "@jupyterlab/codeeditor": ^4.2.0
+    "@jupyterlab/completer": ^4.2.0
+    "@jupyterlab/console": ^4.2.0
+    "@jupyterlab/filebrowser": ^4.2.0
+    "@jupyterlab/launcher": ^4.2.0
+    "@jupyterlab/mainmenu": ^4.2.0
+    "@jupyterlab/rendermime": ^4.2.0
+    "@jupyterlab/settingregistry": ^4.2.0
+    "@jupyterlab/translation": ^4.2.0
+    "@jupyterlab/ui-components": ^4.2.0
     "@lumino/algorithm": ^2.0.1
     "@lumino/coreutils": ^2.1.2
     "@lumino/disposable": ^2.1.2
