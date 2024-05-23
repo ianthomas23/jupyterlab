@@ -38,7 +38,6 @@ import { IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { ILauncher } from '@jupyterlab/launcher';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { IRenderMime, IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { KernelMessage } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import {
@@ -373,9 +372,9 @@ async function activateConsole(
     type?: string;
 
     /**
-     * Whether to create a subshell for this console
+     * The subshell ID if creating a console for a subshell.
      */
-    subshell?: boolean;
+    subshellId?: string;
   }
 
   /**
@@ -396,6 +395,13 @@ async function activateConsole(
       ...(options as Partial<ConsolePanel.IOptions>)
     });
 
+    if (options.subshellId) {
+      panel.sessionContext.ready.then(async () => {
+        // Need to set subshellId before any messages are sent to the subshell.
+        panel.sessionContext.session!.kernel!.subshellId = options.subshellId!;
+      });
+    }
+
     const interactionMode: string = (
       await settingRegistry.get(
         '@jupyterlab/console-extension:tracker',
@@ -409,19 +415,6 @@ async function activateConsole(
     await tracker.add(panel);
     panel.sessionContext.propertyChanged.connect(() => {
       void tracker.save(panel);
-    });
-
-    panel.sessionContext.ready.then(async () => {
-      if (options.subshell) {
-        const future =
-          await panel.sessionContext.session!.kernel!.requestCreateSubshell({});
-        future.onReply = (msg: KernelMessage.ICreateSubshellReplyMsg): void => {
-          // Need to check returned status.
-          console.log('createSubshellReply subshellId', msg.content.subshell_id);
-          panel.sessionContext.session!.kernel!.subshellId =
-            msg.content.subshell_id;
-        };
-      }
     });
 
     shell.add(panel, 'main', {

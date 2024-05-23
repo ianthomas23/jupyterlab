@@ -154,10 +154,10 @@ export function createMessage<T extends Message>(options: IOptions<T>): T {
     session: options.session,
     username: options.username ?? '',
     version: '5.2'
-  }
+  };
   // Only include subshellId if it is a string or null.
   if (options.subshellId !== undefined) {
-    header["subshell_id"] = options.subshellId;
+    header['subshell_id'] = options.subshellId;
   }
   return {
     buffers: options.buffers ?? [],

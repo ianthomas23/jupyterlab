@@ -92,6 +92,7 @@ import {
   IRenderMime,
   IRenderMimeRegistry
 } from '@jupyterlab/rendermime';
+import { KernelMessage } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IStateDB } from '@jupyterlab/statedb';
 import { IStatusBar } from '@jupyterlab/statusbar';
@@ -1390,8 +1391,7 @@ function activateCodeConsole(
       return Private.createConsole(
         commands,
         current,
-        args['activate'] as boolean,
-        false
+        args['activate'] as boolean
       );
     },
     isEnabled
@@ -1399,18 +1399,33 @@ function activateCodeConsole(
 
   commands.addCommand(CommandIDs.createSubshellConsole, {
     label: trans.__('New Subshell Console for Notebook'),
-    execute: args => {
+    execute: async args => {
       const current = tracker.currentWidget;
 
-      if (!current) {
+      if (
+        !current ||
+        !current.sessionContext.session ||
+        !current.sessionContext.session.kernel
+      ) {
         return;
       }
+
+      let subshellId!: string;
+      const future =
+        current.sessionContext.session.kernel.requestCreateSubshell({});
+      future.onReply = async (
+        msg: KernelMessage.ICreateSubshellReplyMsg
+      ): Promise<void> => {
+        // Need to check returned status.
+        subshellId = msg.content.subshell_id;
+      };
+      await future.done;
 
       return Private.createConsole(
         commands,
         current,
         args['activate'] as boolean,
-        true
+        subshellId
       );
     },
     isEnabled
@@ -3814,7 +3829,7 @@ namespace Private {
     commands: CommandRegistry,
     widget: NotebookPanel,
     activate?: boolean,
-    subshell?: boolean
+    subshellId?: string
   ): Promise<void> {
     const options = {
       path: widget.context.path,
@@ -3823,7 +3838,7 @@ namespace Private {
       ref: widget.id,
       insertMode: 'split-bottom',
       type: 'Linked Console',
-      subshell: subshell
+      subshellId
     };
 
     return commands.execute('console:create', options);
