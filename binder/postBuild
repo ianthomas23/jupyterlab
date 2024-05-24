@@ -9,16 +9,16 @@ source activate ${NB_PYTHON_PREFIX}
 # use strict and verbose shell settings
 set -euxo pipefail
 
-pip list | grep ipykernel
+#pip list | grep ipykernel
 
-git clone --depth 1 --single-branch --branch jep91 https://github.com/ianthomas23/ipykernel
-cd ipykernel
-git branch
-pip install -v .
-cd ..
-rm -rf ipykernel
+#git clone --depth 1 --single-branch --branch jep91 https://github.com/ianthomas23/ipykernel
+#cd ipykernel
+#git branch
+#pip install -v .
+#cd ..
+#rm -rf ipykernel
 
-pip list | grep ipykernel
+#pip list | grep ipykernel
 
 
 
@@ -59,3 +59,16 @@ rm -rf \
     ~/.cache \
     dev_mode/stats.json \
     node_modules/@stdlib
+
+
+
+pip list | grep ipykernel
+
+git clone --depth 1 --single-branch --branch jep91 https://github.com/ianthomas23/ipykernel
+cd ipykernel
+git branch
+pip install -v .
+cd ..
+rm -rf ipykernel
+
+pip list | grep ipykernel
