@@ -9,35 +9,40 @@ source activate ${NB_PYTHON_PREFIX}
 # use strict and verbose shell settings
 set -euxo pipefail
 
-# create log folder, named to appear at the top of the file browser
-#mkdir _reports_
 
-# pre-install nodejs deps and build outside of editable python install
-(time yarn)
-(time yarn build:dev:prod)
-#(time yarn build:dev:prod:minimize:report)             2>&1 | tee _reports_/01_build.txt
+git list
 
-# hoist report to where a reviewer might see it
-#mv dev_mode/static/webpack-bundle-analyzer.html _reports_/
 
-# overload best-effort versions from conda-forge for all deps
-(time pip install -v -e .[dev] --no-build-isolation)
 
-# copy configuration to well-known location
-mkdir -p ~/.jupyter
-cp binder/jupyter_config.py ~/.jupyter/
+## create log folder, named to appear at the top of the file browser
+##mkdir _reports_
 
-# capture configuration and debug information
-(time pip list)
-(time pip check || echo FAIL)
-(time jupyter troubleshoot)
-(time jupyter notebook --show-config)
-(time jupyter lab --show-config)
-(time jupyter server extension list)
-(time jupyter labextension list)
+## pre-install nodejs deps and build outside of editable python install
+#(time yarn)
+#(time yarn build:dev:prod)
+##(time yarn build:dev:prod:minimize:report)             2>&1 | tee _reports_/01_build.txt
 
-# clean up egregious wastes of space
-rm -rf \
-    ~/.cache \
-    dev_mode/stats.json \
-    node_modules/@stdlib
+## hoist report to where a reviewer might see it
+##mv dev_mode/static/webpack-bundle-analyzer.html _reports_/
+
+## overload best-effort versions from conda-forge for all deps
+#(time pip install -v -e .[dev] --no-build-isolation)
+
+## copy configuration to well-known location
+#mkdir -p ~/.jupyter
+#cp binder/jupyter_config.py ~/.jupyter/
+
+## capture configuration and debug information
+#(time pip list)
+#(time pip check || echo FAIL)
+#(time jupyter troubleshoot)
+#(time jupyter notebook --show-config)
+#(time jupyter lab --show-config)
+#(time jupyter server extension list)
+#(time jupyter labextension list)
+
+## clean up egregious wastes of space
+#rm -rf \
+#    ~/.cache \
+#    dev_mode/stats.json \
+#    node_modules/@stdlib
