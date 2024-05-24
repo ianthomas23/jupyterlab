@@ -28,24 +28,24 @@ dependencies:
   - tornado >=6.2.0
   - traitlets >=5.10.1
   # test
-  - coverage
-  - pytest >=7.0
-  - pytest-check-links >=0.7
-  - pytest-console-scripts
-  - pytest-cov
-  - pytest-jupyter-server >=0.5.3
-  - pytest-timeout
-  - pytest-tornasync
-  - requests
-  - requests-cache
-  - virtualenv
+  #- coverage
+  #- pytest >=7.0
+  #- pytest-check-links >=0.7
+  #- pytest-console-scripts
+  #- pytest-cov
+  #- pytest-jupyter-server >=0.5.3
+  #- pytest-timeout
+  #- pytest-tornasync
+  #- requests
+  #- requests-cache
+  #- virtualenv
   # dev
   - bump2version
   - hatch
-  - pre-commit
-  - pytest-cov
+  #- pre-commit
+  #- pytest-cov
   - python-build
-  - ruff
+  #- ruff
   # demo
   - jupyter-server-proxy
   - matplotlib-base
