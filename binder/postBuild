@@ -10,6 +10,12 @@ source activate ${NB_PYTHON_PREFIX}
 set -euxo pipefail
 
 
+git branch
+pwd
+ls
+
+
+
 git list
 
 
