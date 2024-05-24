@@ -9,10 +9,23 @@ source activate ${NB_PYTHON_PREFIX}
 # use strict and verbose shell settings
 set -euxo pipefail
 
+pip list | grep ipykernel
 
+git clone --depth 1 --single-branch --branch jep91 https://github.com/ianthomas23/ipykernel
+cd ipykernel
 git branch
-pwd
-ls
+pip install -v .
+cd ..
+
+pip list | grep ipykernel
+
+
+
+
+
+#git branch
+#pwd
+#ls
 
 
 
