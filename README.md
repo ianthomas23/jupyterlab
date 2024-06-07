@@ -1,3 +1,11 @@
+# Kernel subshell demo
+
+This branch contains code to demo `ipykernel` kernel subshells.
+
+You can run it in mybinder using https://mybinder.org/v2/gh/ianthomas23/jupyterlab/jep91_demo?urlpath=lab, wait for the instance to start and open the `subshell_demo_notebook.ipynb` notebook.
+
+---
+
 **[Installation](#installation)** |
 **[Documentation](https://jupyterlab.readthedocs.io)** |
 **[Contributing](#contributing)** |
